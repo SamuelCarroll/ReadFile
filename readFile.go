@@ -7,19 +7,15 @@ import (
 	"io/ioutil"
 	"strconv"
 	"strings"
+
+	"github.com/SamuelCarroll/DataTypes"
 )
 
-//Wine basic structure of the wine interface type
-type Wine struct {
-	Class        int
-	FeatureSlice []interface{}
-}
-
-func handleLine(line string) *Wine {
-	var newWine Wine
+func handleLine(line string) *dataTypes.Data {
+	var newData dataTypes.Data
 	items := strings.Split(line, ",")
 
-	newWine.Class, _ = strconv.Atoi(items[0])
+	newData.Class, _ = strconv.Atoi(items[0])
 
 	for i := 1; i < len(items); i++ {
 		fval, err1 := strconv.ParseFloat(items[i], 64)
@@ -27,15 +23,15 @@ func handleLine(line string) *Wine {
 
 		//try converting to s Float then a bool finally accept a string type
 		if err1 == nil {
-			newWine.FeatureSlice = append(newWine.FeatureSlice, fval)
+			newData.FeatureSlice = append(newData.FeatureSlice, fval)
 		} else if err2 == nil {
-			newWine.FeatureSlice = append(newWine.FeatureSlice, bval)
+			newData.FeatureSlice = append(newData.FeatureSlice, bval)
 		} else {
-			newWine.FeatureSlice = append(newWine.FeatureSlice, items[i])
+			newData.FeatureSlice = append(newData.FeatureSlice, items[i])
 		}
 	}
 
-	return &newWine
+	return &newData
 }
 
 func check(e error) {
@@ -44,8 +40,8 @@ func check(e error) {
 	}
 }
 
-//Read reads in a file of the Wine dataset
-func Read(inFile string) []*Wine {
+//Read reads in a specified file
+func Read(inFile string) []*dataTypes.Data {
 	//func main () {
 	dat, err := ioutil.ReadFile(inFile)
 	check(err)
@@ -53,13 +49,13 @@ func Read(inFile string) []*Wine {
 	sDat := fmt.Sprintf("%s", dat)
 	datLines := strings.Split(sDat, "\n")
 
-	var wines []*Wine
+	var lineData []*dataTypes.Data
 	for _, line := range datLines {
 		if line != "" {
 			temp := handleLine(line)
-			wines = append(wines, temp)
+			lineData = append(lineData, temp)
 		}
 	}
 
-	return wines
+	return lineData
 }
