@@ -11,13 +11,20 @@ import (
 	"github.com/SamuelCarroll/DataTypes"
 )
 
-func handleLine(line string) *dataTypes.Data {
+func handleLine(line string, uidPresent bool) *dataTypes.Data {
 	var newData dataTypes.Data
 	items := strings.Split(line, ",")
 
+	loopStart := 1
+
 	newData.Class, _ = strconv.Atoi(items[0])
 
-	for i := 1; i < len(items); i++ {
+	if uidPresent {
+		newData.UID = items[1]
+		loopStart = 2
+	}
+
+	for i := loopStart; i < len(items); i++ {
 		fval, err1 := strconv.ParseFloat(items[i], 64)
 		bval, err2 := strconv.ParseBool(items[i])
 
@@ -41,7 +48,7 @@ func check(e error) {
 }
 
 //Read reads in a specified file
-func Read(inFile string) []*dataTypes.Data {
+func Read(inFile string, uidPresent bool) []*dataTypes.Data {
 	//func main () {
 	dat, err := ioutil.ReadFile(inFile)
 	check(err)
@@ -52,7 +59,7 @@ func Read(inFile string) []*dataTypes.Data {
 	var lineData []*dataTypes.Data
 	for _, line := range datLines {
 		if line != "" {
-			temp := handleLine(line)
+			temp := handleLine(line, uidPresent)
 			lineData = append(lineData, temp)
 		}
 	}
